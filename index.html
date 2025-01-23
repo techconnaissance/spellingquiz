@@ -80,7 +80,7 @@
 
         // Handle speech recognition results
         recognition.onresult = (event) => {
-            const userAnswer = event.results[0][0].transcript.toLowerCase();
+            var userAnswer = event.results[0][0].transcript.toLowerCase();
             userAnswer = userAnswer.replaceAll(' ', '');
             const feedback = document.getElementById('feedback');
 
