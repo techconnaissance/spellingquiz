@@ -75,6 +75,7 @@
             currentWord = words[Math.floor(Math.random() * words.length)]; // Pick a random word
             speakWord(currentWord); // Speak the word
             document.getElementById('feedback').textContent = 'Spell the word you heard!';
+            setTimeout(1000);
             recognition.start(); // Start listening for the user's response
         });
 
@@ -90,7 +91,8 @@
                 speakWord("Correct! Great job!");
             } else {
                 feedback.textContent = `❌ Oops! You said "${userAnswer}". The correct word is "${currentWord}".`;
-                speakWord(`Oops! The correct spelling is ${currentWord}.`);
+                var formatCurrentWord = addSpacesToWord(currentWord);
+                speakWord(`Oops! The correct spelling is ${formatCurrentWord}.`);
             }
 
             // Update the score
@@ -107,6 +109,10 @@
             console.error('Speech recognition error:', event.error);
             document.getElementById('feedback').textContent = 'Error recognizing speech. Please try again.';
         };
+
+        function addSpacesToWord(word) {
+            return word.split('').join(' ');
+        }
     </script>
 </body>
 
