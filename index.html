@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Spelling Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f8ff;
+        }
+
+        h1 {
+            color: #ff6347;
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #score {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Voice Spelling Game for Kids</h1>
+    <p>Listen to the word and try to spell it aloud!</p>
+    <button id="startGame">Start Game</button>
+    <div id="feedback"></div>
+    <div id="score">Score: 0</div>
+
+    <script>
+        const words = ['apple', 'banana', 'cat', 'dog', 'elephant', 'flower', 'grape', 'hat', 'igloo', 'jelly']; // Word list
+        let currentWord = '';
+        let score = 0;
+
+        // Initialize Speech Recognition
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        // Function to speak a word
+        function speakWord(word) {
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Start Game button handler
+        document.getElementById('startGame').addEventListener('click', () => {
+            currentWord = words[Math.floor(Math.random() * words.length)]; // Pick a random word
+            speakWord(currentWord); // Speak the word
+            document.getElementById('feedback').textContent = 'Spell the word you heard!';
+            recognition.start(); // Start listening for the user's response
+        });
+
+        // Handle speech recognition results
+        recognition.onresult = (event) => {
+            const userAnswer = event.results[0][0].transcript.toLowerCase();
+            userAnswer = userAnswer.replaceAll(' ', '');
+            const feedback = document.getElementById('feedback');
+
+            if (userAnswer === currentWord) {
+                score += 10; // Increment score for correct answer
+                feedback.textContent = `✅ Correct! The word is "${currentWord}".`;
+                speakWord("Correct! Great job!");
+            } else {
+                feedback.textContent = `❌ Oops! You said "${userAnswer}". The correct word is "${currentWord}".`;
+                speakWord(`Oops! The correct spelling is ${currentWord}.`);
+            }
+
+            // Update the score
+            document.getElementById('score').textContent = `Score: ${score}`;
+        };
+
+        // Restart recognition when it stops
+        recognition.onend = () => {
+            document.getElementById('feedback').textContent += ' Press "Start Game" to play again.';
+        };
+
+        // Error handling
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            document.getElementById('feedback').textContent = 'Error recognizing speech. Please try again.';
+        };
+    </script>
+</body>
+
+</html>
